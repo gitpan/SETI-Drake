@@ -1,7 +1,7 @@
-# $Id: Drake.pm,v 1.3 2004/10/29 07:33:49 gene Exp $
+# $Id: Drake.pm,v 1.4 2004/11/01 01:22:07 gene Exp $
 
 package SETI::Drake;
-$VERSION = 0.01;
+$VERSION = 0.0101;
 use strict;
 use warnings;
 use Carp;
@@ -51,7 +51,7 @@ __END__
 
 =head1 NAME
 
-SETI::Drake - Estimate the number of intersteller communicating civilizations
+SETI::Drake - Estimate the number of interstellar communicating civilizations
 
 =head1 SYNOPSIS
 
@@ -72,7 +72,7 @@ SETI::Drake - Estimate the number of intersteller communicating civilizations
 
 =head1 DESCRIPTION
 
-A SETI::Drake object answers the question, "How many intersteller
+A SETI::Drake object answers the question, "How many interstellar
 communicating civilizations might be out there?"
 
 =head1 METHODS
