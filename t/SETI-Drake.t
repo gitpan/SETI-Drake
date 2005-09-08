@@ -1,15 +1,14 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-BEGIN {
-    use Test::More tests => 6;
-    use_ok 'SETI::Drake';
-}
+use Test::More tests => 5;
 
-my $d = eval { SETI::Drake->new() };
+use_ok 'SETI::Drake';
+
+my $x = eval { SETI::Drake->new() };
 warn $@ if $@;
-isa_ok $d, 'SETI::Drake';
-is $d->N, 10_000, 'Frank Drake is an optimist';
+isa_ok $x, 'SETI::Drake';
+is $x->N, 10_000, 'Frank Drake is an optimist';
 
 my %args = (
     R  => 0,
@@ -20,8 +19,8 @@ my %args = (
     fc => 0,
     L  => 0,
 );
-$d = SETI::Drake->new(%args);
-is $d->N, 0, 'all zero values equal zero';
+$x = SETI::Drake->new(%args);
+is $x->N, 0, 'all zero values equal zero';
 
 %args = (
     R  => 5,
@@ -32,28 +31,5 @@ is $d->N, 0, 'all zero values equal zero';
     fc => 0.1,
     L  => 500,
 );
-$d = SETI::Drake->new(%args);
-is $d->N, 1.25, 'Gene is a pessimist';
-
-%args = (
-    R  => 1_000_000_000,
-    fp => 0.00001,
-    ne => 0.33,
-    fl => 0.00001,
-    fi => 0.00001,
-    fc => 0.00001,
-    L  => 0.000000001,
-);
-$d = SETI::Drake->new(%args);
-
-%args = (
-    R  => 10,
-    fp => 0.5,
-    ne => 2,
-    fl => 1,
-    fi => 1,
-    fc => 0.01,
-    L  => 10,
-);
-$d = SETI::Drake->new(%args);
-is $d->N, 1, 'Drake according to wikipedia'
+$x = SETI::Drake->new(%args);
+is $x->N, 1.25, 'Gene Boggs is a pessimist';

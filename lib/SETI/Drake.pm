@@ -1,23 +1,24 @@
 # $Id: Drake.pm,v 1.4 2004/11/01 01:22:07 gene Exp $
 
 package SETI::Drake;
-$VERSION = 0.0101;
 use strict;
 use warnings;
 use Carp;
+use vars qw( $VERSION );
+$VERSION = 0.02;
 
 sub new {
     my $class = shift;
-    my $proto = ref $class || $class;
+    my $proto = ref($class) || $class;
     my $self  = {
         defaults => {
-            R  => 5,
+            R  => 10,
             fp => 0.5,
             ne => 2,
             fl => 1,
-            fi => 0.2,
+            fi => 0.1,
             fc => 1,
-            L  => 10000,
+            L  => 10_000,
         },
         @_
     };
@@ -28,8 +29,8 @@ sub new {
 
 sub _init {
     my $self = shift;
-    for( keys %{$self->{defaults}} ) {
-        # Make sure each equation term has a defined value.
+    # Make sure each equation term has a defined value.
+    for( keys %{ $self->{defaults} } ) {
         $self->{$_} = $self->{defaults}{$_}
             unless defined $self->{$_};
     }
@@ -37,10 +38,8 @@ sub _init {
 
 sub N {
     my $self = shift;
-    # Set N to the value of R.
+    # Calculate the product of the object values except the defaults.
     my $N = $self->{R};
-    # Calculate the repeated product of every value of the object
-    # except R and the defaults.
     $N *= $self->{$_} for grep { !/^R|defaults$/o } keys %$self;
     return $N;
 }
@@ -56,7 +55,8 @@ SETI::Drake - Estimate the number of interstellar communicating civilizations
 =head1 SYNOPSIS
 
   use SETI::Drake;
-  $d = SETI::Drake->new(
+  my $threshold = shift || 10_000;
+  my $x = SETI::Drake->new(
       R  => $stars,
       fp => $planets,
       ne => $support,
@@ -65,84 +65,76 @@ SETI::Drake - Estimate the number of interstellar communicating civilizations
       fc => $communication,
       L  => $lifespan,
   );
-  $n = $d->N;
-  printf 'You are ' .
-    ($n > $threshold ? 'opt' : 'pess') .
-    "imistic: %0.2f\n", $n;
+  printf "You are %simistic: %0.2f\n",
+    ($x > $threshold ? 'opt' : 'pess'), $x->N;
 
 =head1 DESCRIPTION
 
-A SETI::Drake object answers the question, "How many interstellar
-communicating civilizations might be out there?"
+A C<SETI::Drake> object answers the question, "How many detectible,
+intelligent, interstellar communicating civilizations might be out
+there, in the galaxy?" by providing a single method, C<N()>, which is
+a prediction based on the product of seven factors.  In other words,
+this module does nothing more than multiply seven numbers together.
+
+According to the Nova Origins video, "Where Are The Aliens?", Drake's
+values are:
+
+  R  => 10      # How many stars are formed each year, in the Milky Way?
+  fp => 0.5     # How many stars have planets?
+  ne => 2       # How many planets can support life?
+  fl => 1       # How many planets have life?
+  fi => 0.1     # How often will life becme intelligent?
+  fc => 1       # How many of those planets develop interstellar communication?
+  L  => 10,000  # How long might a technologically advanced civilaztion last?
+
+We get an optomistic N = 10,000.  According to the NOVA website however,
+Drake's values are:
+
+  R  => 5       # Rate of star formation per year, in the Milky Way
+  fp => 0.5     # Percentage of stars that form planets
+  ne => 2       # Average number of planets that could support life
+  fl => 1       # Percentage of those planets where life actually occurs
+  fi => 0.2     # Percentage of those planets where intelligence develops
+  fc => 1       # Percentage of intelligent species that procude interstellar communications
+  L  => 10,000  # Average lifetime (in years) of a communicating civilization
+
+But again, we get N = 10,000.  Whew.  That was close.
+
+Anyway, according to Wikipedia, Drake's values from 1961 were:
+
+  R  => 10    # Annual rate of star formation in our galaxy.
+  fp => 0.5   # Fraction of those stars which have planets.
+  ne => 2     # Average number of planets which can potentially support life per star that has planets.
+  fl => 1     # Fraction of the above which actually go on to develop life.
+  fi => 0.01  # Fraction of the above which actually go on to develop intelligent life.
+  fc => 0.01  # Fraction of the above which are willing and able to communicate.
+  L  => 10    # Expected lifetime (in years) of such a civilisation.
+
+Giving a slightly pessimistic value of 0.01 for N.
 
 =head1 METHODS
 
-=head2 new
+=head2 new()
 
-  my $d = SETI::Drake->new($arguments);
+  my $d = SETI::Drake->new( %arguments );
 
 Return a new SETI::Drake instance.  If no equation variables are
-provided, Drake's choices are used.
+provided, Frank Drake's choices (from his 2004 chalkboard video
+interview on Nova) are used.
 
-According to NOVA, Drake's values were:
+=head2 N()
 
-  R  => 5,      # Number of stars formed per year.
-  fp => 0.5,    # Fraction of those stars that form planets.
-  ne => 2,      # Average number of those planets that can support life.
-  fl => 1,      # Fraction of those planets that actually do develop life.
-  fi => 0.2,    # Fraction of those planets that then evolve intelligence.
-  fc => 1,      # Fraction of those planets that develop interstellar
-                # communication.
-  L  => 10000,  # Average lifetime (in years) of an interstellar
-                # communicating civilization.
+  $N = $d->N();
 
-According to Wikipedia, Drake's values were:
+Return the real number value of the Drake equation:
 
-  R  => 10,   # Annual rate of star creation in our galaxy.
-  fp => 0.5,  # Fraction of those stars which have planets.
-  ne => 2,    # Average number of planets which can potentially
-              # support life per star that has planets.
-  fl => 1,    # Fraction of the above which actually go on to
-              # develop life.
-  fi => 0.1,  # Fraction of the above which actually go on to
-              # develop intelligent life.
-  fc => 0.1,  # Fraction of the above which are willing and
-              # able to communicate.
-  L  => 10,   # Expected lifetime (in years) of such a
-              # civilisation.
-
-Bradley Keyes of activemind.com computes it this way:
-
-  R  => 1_000_000_000,  # Number of stars in the Milky Way.
-  fp => 0.00001,  # Fraction of stars that have planets
-                  # (.0001% or 1 of 1,000,000).
-  ne => 0.33,     # Number of planets per star capable of ecologically
-                  # sustaining life.
-  fl => 0.00001,  # Fraction of planets in ne where life evolves
-                  # (.0001% or 1 of 1,000,000).
-  fi => 0.00001,  # Fraction of fl where intelligent life evolves
-                  # (.0001% or 1 of 1,000,000).
-  fc => 0.00001,  # Fraction of fi that communicate
-                  # (.0001% or 1 of 1,000,000).
-  L  => 0.000000001,  # Fraction of the planet's life during which the
-                      # communicating civilizations survive
-                      # 1 / 1,000,000,000th (10 years)
-
-=head2 N
-
-  $N = $d->N;
-
-Return the real number value of the Drake equation.
-
-=head1 TO DO
-
-Add meta-galactic terms to the equation?
+  N = R* x fp x ne x fl x fc x L
 
 =head1 SEE ALSO
 
-C<http://www.pbs.org/wgbh/nova/origins/drake.html>
-
 C<http://en.wikipedia.org/wiki/Drake_equation>
+
+C<http://www.pbs.org/wgbh/nova/origins/drake.html>
 
 C<http://www.jb.man.ac.uk/research/seti/drake.html>
 

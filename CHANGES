@@ -1,5 +1,11 @@
 Changes file for SETI::Drake
 
+0.02 Wed Sep 7 ~11:45PM 2005
+    - Fixed every part of the documentation.
+    - Reset the default values to the one's from Frank on Nova video
+      that I finally watched.
+    - Cleaned up the test case file a bit.
+
 0.0101 Sun Oct 31
     - Oh man. Really lame typo. (forgetting to spellcheck)--
 
