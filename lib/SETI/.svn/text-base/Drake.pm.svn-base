@@ -1,4 +1,4 @@
-# $Id: Drake.pm 865 2008-04-20 06:16:37Z gene $
+# $Id$
 package SETI::Drake;
 $VERSION = 0.0102;
 use strict;
