@@ -1,6 +1,7 @@
-# $Id: Drake.pm 865 2008-04-20 06:16:37Z gene $
+# $Id: Drake.pm 868 2008-04-20 07:24:28Z gene $
+
 package SETI::Drake;
-$VERSION = 0.0102;
+$VERSION = 0.0201;
 use strict;
 use warnings;
 
@@ -69,18 +70,11 @@ SETI::Drake - Estimate the number of interstellar communicating civilizations
 
 =head1 DESCRIPTION
 
-A SETI::Drake object answers the question, "How many interstellar
-communicating civilizations might be out there?"  This is of course
-based on the famous speculation of Frank Drake.
-
-=head1 METHODS
-
-=head2 new
-
-  my $d = SETI::Drake->new($arguments);
-
-Return a new SETI::Drake instance.  If no equation variables are
-provided, Drake's choices are used.
+A C<SETI::Drake> object answers the question, "How many detectible,
+intelligent, interstellar communicating civilizations might be out
+there, in the galaxy?" by providing a single method, C<N()>, which is
+a prediction based on the product of seven factors.  In other words,
+this module does nothing more than multiply seven numbers together.
 
 According to NOVA, Drake's values were:
 
@@ -96,10 +90,10 @@ According to Wikipedia, Drake's values were:
 
   R  => 10,  # Annual rate of star creation in our galaxy.
   fp => 0.5, # Fraction of those stars which have planets.
-  ne => 2,   # Average number of planets which can potentially support life per star that has planets.
-  fl => 1,   # Fraction of the above which actually go on to develop life.
-  fi => 0.1, # Fraction of the above which actually go on to develop intelligent life.
-  fc => 0.1, # Fraction of the above which are willing and able to communicate.
+  ne => 2,   # Average number of these planets that can potentially support life.
+  fl => 1,   # Fraction of the above that develop life.
+  fi => 0.1, # Fraction of the above that develop intelligent life.
+  fc => 0.1, # Fraction of the above that communicate.
   L  => 10,  # Expected lifetime (in years) of such a civilisation.
 
 On Cosmos, Carl Sagan computes it this way:
@@ -112,15 +106,32 @@ On Cosmos, Carl Sagan computes it this way:
   fc => 1/10, # Fraction of worlds that produce a technical civilization.
   L  => 1/100_000_000, # Chance that we might destroy ourselves tomorrow.
 
+=head1 METHODS
+
+=head2 new
+
+  my $d = SETI::Drake->new($arguments);
+
+Return a new SETI::Drake instance.  If no equation variables are
+provided, Frank Drake's choices (from his 2004 chalkboard video
+interview on Nova) are used.
+
 =head2 N
 
   $N = $d->N;
 
-Return the real number value of the Drake equation.
+Return the value of the Drake equation:
+
+  N = R* x fp x ne x fl x fc x L
+
+=head2 TO DO
+
+Use L<Math::BigRat>.
 
 =head1 SEE ALSO
 
-L<http://www.youtube.com/watch?v=0Ztl8CG3Sys> Carl Sagan explains it.
+L<http://www.youtube.com/watch?v=0Ztl8CG3Sys> - Carl Sagan explains
+it.
 
 L<http://www.setileague.org/general/drake.htm>
 
@@ -136,8 +147,8 @@ L<http://setiathome.berkeley.edu>
 
 Copyright 2004, Gene Boggs, All Rights Reserved
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 See L<http://www.perl.com/perl/misc/Artistic.html>
 

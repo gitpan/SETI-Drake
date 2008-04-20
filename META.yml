@@ -1,7 +1,7 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         SETI-Drake
-version:      0.0102
+version:      0.0201
 version_from: lib/SETI/Drake.pm
 installdirs:  site
 requires:
